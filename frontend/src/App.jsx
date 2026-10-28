@@ -19,12 +19,14 @@ export default function App() {
       {step === "org" && (
         <OrgPicker
           orgs={session.organizations}
-          onPick={(o) => { setOrg(o); setStep(o.role === "admin" ? "dashboard" : "diagnostic"); }}
+          // Client request 2: employees land on their report, where "Delete my data" is, without retaking first
+          onPick={(o) => { setOrg(o); setStep(o.role === "admin" ? "dashboard" : "report"); }}
         />
       )}
       {step === "diagnostic" && <Diagnostic onDone={() => setStep("report")} />}
-      {step === "report" && <Report />}
-      {step === "dashboard" && <Dashboard org={org} />}
+      {step === "report" && <Report onTake={() => setStep("diagnostic")} />}
+      {/* Fix V1: the dashboard no longer gets an org id; the server uses the token's org */}
+      {step === "dashboard" && <Dashboard />}
     </div>
   );
 }
