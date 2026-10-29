@@ -13,4 +13,4 @@ A suggested order for the screen recording. Reseed first so the numbers match: `
 | 3:10 | Sign in as **neha@northwind.test** → report | Private policy evidence; what the AI said and which model; mock labelled as demo. |
 | 3:40 | Sign in as **vikram@northwind.test** → Delete my data → back to Asha's dashboard | Sales drops to 4 and disappears immediately. Client request 2 + request 1 working together. |
 | 4:00 | `python -m app.eval` | Say it's mock mode, so the score numbers mean nothing. The real result: the injection screen catches 2 of 6 attempts and wrongly excludes 2 of 24 genuine answers. Live model not run. |
-| 4:30 | README "What I deliberately left" + questions for Northwind | Key rotation, differencing over time (measured: 4.08 vs a real 4.00), live AI evaluation not run, Docker and GitHub Actions unverified. |
+| 4:30 | `docs/SUBMISSION_DETAILS.md` "What I deliberately left" + questions for Northwind | Key rotation, differencing over time (measured: 4.08 vs a real 4.00), live AI evaluation not run, Docker and GitHub Actions unverified. |
