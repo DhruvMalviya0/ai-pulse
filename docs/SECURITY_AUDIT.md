@@ -2,7 +2,7 @@
 
 Audit of the inherited code at commit `5e3713c` ("Add client request from Northwind").
 Every finding marked **Reproduced** was confirmed by running it against that commit, not just by reading the code.
-The **Status** column reflects the final state of `main`. Each fix landed on its own branch with tests; the root `README.md` maps findings to branches.
+The **Status** column reflects the final state of `main`. Each fix landed on its own branch with tests; [`SUBMISSION_DETAILS.md`](SUBMISSION_DETAILS.md#what-i-fixed) maps findings to branches.
 V27–V33 came from a second-pass review of the fixed code (branch `review/skills-second-pass`); see [Second-pass review](#second-pass-review).
 
 Severity scale:
@@ -31,7 +31,7 @@ Severity scale:
 | V13 | High | Privacy | No way for an employee to delete their data (client's request #2) | Fixed |
 | V14 | Medium | AI | Live LLM call has no error handling, no length cap, no temperature setting; a timeout returns a 500 and loses all answers | Fixed |
 | V15 | Medium | Correctness | Departments with no responses show as "Beginner, 0.0" instead of "no data" | Fixed |
-| V16 | Medium | Ops | Dockerfile can't start (`main:app` instead of `app.main:app`), copies `.env` into the image, runs as root | Fixed (image not built locally, see README) |
+| V16 | Medium | Ops | Dockerfile can't start (`main:app` instead of `app.main:app`), copies `.env` into the image, runs as root | Fixed (image not built locally, see SUBMISSION_DETAILS.md) |
 | V17 | Medium | Ops | `python -m app.seed` runs `drop_all` on whatever `DATABASE_URL` points to, including production | Fixed |
 | V18 | Medium | Web | CORS `allow_origins=["*"]` | Fixed |
 | V19 | Medium | Tests | `test_admin_cannot_see_other_org` asserts the vulnerability (expects 200) and uses the admin's own org id | Fixed |
@@ -156,7 +156,7 @@ No prompt-level defence is complete. I'd add a regression set of injection attem
 
 ### V12. Small groups identify individuals (client's request #1)
 With the seed data, Engineering and HR each have 2 people. Department averages and the org-wide risk list let leadership work out a named person's results.
-**Fix:** see "Client request" in the README. Groups below the threshold (5 respondents) are merged into "Other teams". If "Other teams" is still under 5 it's hidden, and org-wide totals are withheld so the hidden group can't be worked out by subtraction.
+**Fix:** see "The client's request" in [`SUBMISSION_DETAILS.md`](SUBMISSION_DETAILS.md#the-clients-request). Groups below the threshold (5 respondents) are merged into "Other teams". If "Other teams" is still under 5 it's hidden, and org-wide totals are withheld so the hidden group can't be worked out by subtraction.
 
 ### V13. No right to delete (client's request #2)
 **Fix:** `DELETE /me/data` removes the caller's answers in the current org, and the employee can do it from their report page. Dashboards are computed live, so it disappears immediately.
@@ -192,7 +192,7 @@ Departments with no respondents show `average_score: 0.0, level: "Beginner"`. Le
 - **V20. No rate limiting on `/auth/login`.** Belongs at the gateway or reverse proxy, or in a small middleware with shared state (Redis). Out of scope for a single-process demo.
 - **V21. Token in `localStorage`.** Moving to an `httpOnly` cookie needs CSRF protection and same-site deployment decisions. The frontend renders no HTML from user input (no `dangerouslySetInnerHTML`), which keeps XSS exposure low for now.
 - **V22. No token revocation.** Tokens live 12 hours. Membership is re-checked from the database on every request, so removing someone from an org takes effect immediately. A full revocation list isn't worth it yet.
-- **V23. Third-party LLM processing.** I added a notice to the diagnostic screen. A real deployment needs a DPA with the model provider and a decision on retention. See the questions for the client in the README.
+- **V23. Third-party LLM processing.** I added a notice to the diagnostic screen. A real deployment needs a DPA with the model provider and a decision on retention. See the questions for the client in [`SUBMISSION_DETAILS.md`](SUBMISSION_DETAILS.md#what-id-ask-northwind).
 
 - **V25. Dev-server advisories in vite/esbuild.** They affect only `npm run dev` on a developer's machine, not the built frontend users get. I took the non-breaking patch (5.4.11 → 5.4.21). The remaining advisories cover vite ≤ 6.4.3 (`npm audit`, 28 Oct 2026), so they need a newer major than 6, which I'd do as its own change with a full UI check.
 - **V26. Differencing over time.** The minimum group size stops leadership seeing a small group. It doesn't stop someone comparing the Sales average just before and just after one named person submits (or deletes), and working out that person's score from the change. Real fixes are product decisions: refresh dashboards on a schedule (e.g. daily snapshots) instead of live, and/or only publish a change once several new responses have arrived. This conflicts slightly with the client's "disappear immediately" wording for deletion (a deletion should still remove data at once; only the *published aggregates* would refresh on a schedule). It's in the questions for the client.
